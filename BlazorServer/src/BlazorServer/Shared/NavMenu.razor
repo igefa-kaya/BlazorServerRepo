@@ -1,0 +1,42 @@
+﻿<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">BlazorServer</a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <nav class=" flex flex-col">
+        <div class="text-white text-left mx-5 my-2">
+            <NavLink class="my-2" href="" Match="NavLinkMatch.All">
+                <span aria-hidden="true"></span> [Icon] Home
+            </NavLink>
+        </div>
+
+        <div class="text-white text-left mx-5 my-2">
+            <NavLink class="my-2" href="calendar">
+                <span aria-hidden="true"></span> [Icon] Calendar
+            </NavLink>
+        </div>
+
+        <div class="text-white text-left mx-5 my-2">
+            <NavLink class="my-2" href="fetchdata">
+                <span aria-hidden="true"></span> [Icon] Fetch data
+            </NavLink>
+        </div>
+
+    </nav>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "visible" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

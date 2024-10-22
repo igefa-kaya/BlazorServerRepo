@@ -1,0 +1,92 @@
+﻿@using BlazorServer.CustomComponents.Enum
+@using BlazorServer.CustomKomponents.Enums
+@using BlazorServer.Entities
+
+<h3>TODO: Kundendaten</h3>
+
+<h3>TODO: Verterterdaten</h3>
+
+@if (SelectedAppointment != null)
+{
+    @*TODO Unklar wie Appointment aufgebaut ist.*@
+    <div class="form-group">
+        <b><label class="label">Erstelldatum: @CreationDate Uhr.</label></b>
+        <EditForm Model="SelectedAppointment">
+
+            <label class="label">Grund des Termins</label>
+            <InputText class="input-text" @bind-Value="SelectedAppointment.Cause"/>
+
+            <label class="label">Ziel des Termins</label>
+            <InputText class="input-text" @bind-Value="SelectedAppointment.Goal"/>
+
+            <label class="label">Aktion</label>
+            <select class="select">
+                <option class="option">Muster 1</option>
+                <option class="option">Muster 2</option>
+            </select>
+
+            <label class="label">Fokusthemen</label>
+            <select class="select">
+                <option>Muster 1</option>
+                <option>Muster 2</option>
+            </select>
+
+            <label class="label">Kundenzufriedenheit</label>
+            <select class="select" @bind="SelectedAppointment.CustomerSatisfaction">
+                <option>Muster 1</option>
+                <option>Muster 2</option>
+            </select>
+
+            <label class="label">Bemerkung Kundenzufriedenheit</label>
+            <InputTextArea class="input-textarea" @bind-Value="SelectedAppointment.CustomerSatisfactionDescription"/>
+
+            <label class="label">Terminzeitraum vom</label>
+            <input class="input-datetime" type="datetime-local" @bind-value="SelectedAppointment.StartTime"/>
+
+            <label class="label">bis</label>
+            <input class="input-datetime" type="datetime-local" @bind-value="SelectedAppointment.EndTime"/>
+
+            <label class="label">Terminstatus</label>
+            <select class="select" @bind="SelectedAppointment.Status">
+                <option class="form-check-input" value="@AppointmentState.NotStarted"> Nicht gestartet</option>
+                <option class="form-check-input" value="@AppointmentState.Started"> Gestartet</option>
+                <option class="form-check-input" value="@AppointmentState.Cancelled"> Storniert</option>
+                <option class="form-check-input" value="@AppointmentState.Done"> Abgeschlossen</option>
+            </select>
+
+        </EditForm>
+    </div>
+    <br />
+    <div>
+        <button class="btn-primary" @onclick="async() => await BlazoredModalInstance.CloseAsync()">Termin speichern</button>
+        <button class="btn-secondary" @onclick="async () => await BlazoredModalInstance.CancelAsync()">Abbrechen</button>
+    </div>
+}
+else
+{
+    <h3>Die Daten des Termins konnten nicht eingelesen werden.</h3>
+    <button class="btn btn-secondary" @onclick="async () => await BlazoredModalInstance.CancelAsync()">Abbrechen</button>
+}
+
+
+@code {
+    [CascadingParameter]
+    private BlazoredModalInstance BlazoredModalInstance { get; set; } = null!;
+
+    [ParameterAttribute]
+    public Appointment? SelectedAppointment { get; set; }
+
+    public string CreationDate { get; set; } = string.Empty;
+    public string StartTime { get; set; } = string.Empty;
+    public string EndTime { get; set; } = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        if (SelectedAppointment != null)
+        {
+            CreationDate = SelectedAppointment.CreationDate.ToString("dd.MM.yyyy, HH:mm:ss");
+            StartTime = SelectedAppointment.StartTime.ToString("dd.MM.yyyy, HH:mm:ss");
+            EndTime = SelectedAppointment.EndTime.ToString("dd.MM.yyyy, HH:mm:ss");
+        }
+    }
+}

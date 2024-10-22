@@ -1,0 +1,37 @@
+﻿@using BlazorServer.Entities
+<h3>TODO Kundendaten</h3>
+<h3>TODO Vertreterdaten</h3>
+
+<EditForm Model="CreateAppointment">
+    <label class="label">Goaltext</label>
+    <input class="input-text" @bind-value="CreateAppointment.GoalText"/>
+    <label class="label">Terminzeitraum vom</label>
+    <input class="input-datetime" type="datetime-local" @bind-value="CreateAppointment.StartTime" />
+    <label class="label">bis</label>
+    <input class="input-datetime" type="datetime-local" @bind-value="CreateAppointment.EndTime" />
+    <label class="label">Kommentare</label>
+    <InputTextArea class="input-textarea" @bind-Value=CreateAppointment.Comment/>
+</EditForm>
+
+<div>
+    <button class="btn btn-primary" @onclick="async() => await BlazoredModalInstance.CloseAsync(ModalResult.Ok(CreateAppointment))">Termin speichern</button>
+    <button class="btn-secondary" @onclick="async () => await BlazoredModalInstance.CancelAsync()">Abbrechen</button>
+</div>
+
+@code {
+    [CascadingParameter]
+    private BlazoredModalInstance BlazoredModalInstance { get; set; } = null!;
+
+    Appointment CreateAppointment = null!;
+
+
+
+    protected override void OnInitialized()
+    {
+        CreateAppointment = new();
+        CreateAppointment.StartTime = DateTime.Now;
+        CreateAppointment.EndTime = CreateAppointment.StartTime.AddHours(1);
+    }
+
+
+}

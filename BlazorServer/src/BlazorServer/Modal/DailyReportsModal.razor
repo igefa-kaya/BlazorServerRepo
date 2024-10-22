@@ -1,0 +1,53 @@
+﻿@using BlazorServer.Entities
+
+@if (SelectedDailyReport != null)
+{
+    <EditForm Model="SelectedDailyReport">
+        <div>
+            <label class="label">Gearbeitet von</label>
+            <br />
+            <input type="datetime-local" class="input-datetime" @bind="SelectedDailyReport.StartTime" />
+
+            <label class="label">bis</label>
+            <input type="datetime-local" class="input-datetime" @bind="SelectedDailyReport.EndTime" />
+
+            <label class="label">Gefahrene Kilometer</label>
+            <InputNumber class="input-text" @bind-Value="SelectedDailyReport.DrivenKm" />
+
+            <label class="label">Notizen</label>
+            <InputTextArea class="input-textarea" @bind-Value="SelectedDailyReport.Notes" />
+        <br />
+        </div>
+
+        <div class="form-group d-flex justify-content-between">
+            <button class="btn btn-primary" @onclick="async() => await BlazoredModalInstance.CloseAsync(ModalResult.Ok(SelectedDailyReport))">Termin speichern</button>
+            <button class="btn btn-secondary" @onclick="async () => await BlazoredModalInstance.CancelAsync()">Abbrechen</button>
+        </div>
+    </EditForm>
+}
+else
+{
+    <h3>Die Daten des Tagesberichts konnten nicht eingelesen werden.</h3>
+    <button class="btn btn-secondary" @onclick="async () => await BlazoredModalInstance.CancelAsync()">Abbrechen</button>
+}
+
+
+@code {
+    [CascadingParameter]
+    private BlazoredModalInstance BlazoredModalInstance { get; set; } = null!;
+
+    [ParameterAttribute]
+    public DailyReport SelectedDailyReport { get; set; } = new();
+    public string CreationDate { get; set; } = string.Empty;
+    public string StartTime { get; set; } = string.Empty;
+    public string EndTime { get; set; } = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        if (SelectedDailyReport != null)
+        {
+            StartTime = SelectedDailyReport.StartTime.ToString("dd.MM.yyyy, HH:mm:ss");
+            EndTime = SelectedDailyReport.EndTime.ToString("dd.MM.yyyy, HH:mm:ss");
+        }
+    }
+}

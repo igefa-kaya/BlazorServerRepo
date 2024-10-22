@@ -1,0 +1,168 @@
+﻿@page "/test"
+@using System.Security.Claims
+@using ITS.WWS.WebApp.Services
+@using Microsoft.Graph.Models
+
+<style>
+    .calendar {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr); /* 7 columns for the days of the week */
+        gap: 10px;
+    }
+
+    .calendar-day {
+        padding: 20px;
+        border: 1px solid #ccc;
+        text-align: center;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+        .calendar-day:hover {
+            background-color: #f0f0f0; /* Highlight on hover */
+        }
+</style>
+
+
+<h3>Simple Calendar</h3>
+
+<button @onclick=" async () => await PostAppointmentTest()">Send Appointment</button>
+
+<div @onclick="HandleClick" data-date="2024-10-21" class="calendar-day">
+    <div class="calendar">
+        @foreach (Event appointment in Events)
+        {
+            <div class="calendar-day">
+                @appointment.Subject
+                @appointment.BodyPreview
+            </div>
+        }
+    </div>
+    <!-- Calendar day content here -->
+</div>
+
+@code {
+    private List<DateTime> Days { get; set; }
+    private DateTime CurrentMonth { get; set; }
+    private List<Event> Events { get; set; } = new List<Event>();
+    private string UserEmail { get; set; } = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        // Set the current month to the current date
+        CurrentMonth = DateTime.Now;
+
+        // Generate days for the current month
+        GenerateDays();
+    }
+
+    private void GenerateDays()
+    {
+        // Get the first day of the current month
+        var firstDayOfMonth = new DateTime(CurrentMonth.Year, CurrentMonth.Month, 1);
+        // Get the last day of the current month
+        var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+
+        Days = new List<DateTime>();
+
+        // Loop through each day in the month
+        for (var day = firstDayOfMonth; day <= lastDayOfMonth; day = day.AddDays(1))
+        {
+            Days.Add(day);
+        }
+    }
+
+    private void OnDayClick(DateTime day)
+    {
+        // Output the clicked date to the console
+        Console.WriteLine($"Clicked on: {day.ToShortDateString()}");
+        // You can add additional logic for what happens on day click here
+    }
+}
+
+
+@code {
+    private DateTime lastClickTime;
+    private const int doubleClickThreshold = 300; // Time in milliseconds to consider a double click
+    private bool isDoubleClick;
+
+    private void HandleClick()
+    {
+        var currentTime = DateTime.Now;
+
+        // Check if the time between clicks is within the double click threshold
+        if ((currentTime - lastClickTime).TotalMilliseconds <= doubleClickThreshold)
+        {
+            // This is a double click
+            isDoubleClick = true;
+            OnDoubleClick();
+        }
+        else
+        {
+            // This is a single click
+            isDoubleClick = false;
+            OnSingleClick();
+            ResetClick();
+
+        }
+
+        lastClickTime = currentTime;
+    }
+
+    private void ResetClick()
+    {
+        if (!isDoubleClick)
+        {
+            // Reset click state only if it was not a double click
+            lastClickTime = DateTime.MinValue;
+        }
+    }
+
+    private void OnSingleClick()
+    {
+        Console.WriteLine("Single click detected.");
+        // Implement your single click logic here
+    }
+
+    private void OnDoubleClick()
+    {
+        Console.WriteLine("Double click detected.");
+        // Implement your double click logic here
+    }
+}
+
+
+
+@inject CalendarService calendarService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@code {
+    private EventCollectionResponse? Response { get; set; } = null;
+    private AuthenticationState? AuthState { get; set; } = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        AuthState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+    }
+
+    private async Task PostAppointmentTest()
+    {
+        await calendarService.PostAppointmentAsync(UserEmail);
+    }
+
+    private async Task GetAppointsmentsByMonth()
+    {
+        if (AuthState != null)
+        {
+            if (AuthState.User.Identity != null && AuthState.User.Identity.IsAuthenticated)
+            {
+                ClaimsPrincipal user = AuthState.User;
+                UserEmail = AuthState.User.Claims.Where(x => x.Type == "preferred_username").FirstOrDefault()?.Value ?? string.Empty;
+                Response = await calendarService.GetCalendarByMonthAsync(UserEmail);
+                if (Response != null && Response.Value != null)
+                {
+                    Events = Response.Value;
+                }
+            }
+        }
+    }
+}

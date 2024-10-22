@@ -1,0 +1,25 @@
+﻿@using BlazorServer.Entities
+
+
+@foreach(Appointment appointment in DayAppointments)
+{
+    <button @onclick=" async () => await ReturnAppointment(appointment)">@appointment.GoalText</button>
+}
+
+@code {
+    [CascadingParameter]
+    private BlazoredModalInstance BlazoredModalInstance { get; set; } = null!;
+
+    [ParameterAttribute]
+    public IList<Appointment> DayAppointments { get; set; } = new List<Appointment>();
+
+    /// <summary>
+    /// Displays the Appointobject on the "+1"
+    /// </summary>
+    /// <param name="appointment"></param>
+    /// <returns></returns>
+    private async Task ReturnAppointment(Appointment appointment)
+    {
+        await BlazoredModalInstance.CloseAsync(ModalResult.Ok(appointment));
+    }
+}
