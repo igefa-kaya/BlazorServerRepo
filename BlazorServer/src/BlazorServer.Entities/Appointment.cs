@@ -27,6 +27,7 @@ namespace BlazorServer.Entities
         public string Goal { get; set; } = string.Empty;
 
         public bool IsDone { get; set; } = false;
+        public bool perhaps { get; set; } = false;
 
         public AppointmentState Status { get; set; } = AppointmentState.NotStarted;
 
