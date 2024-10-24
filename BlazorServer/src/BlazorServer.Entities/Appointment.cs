@@ -10,7 +10,9 @@ namespace BlazorServer.Entities
 
         public DateTime EndTime { get; set; }
 
-        public DateTime CreationDate { get; set; }
+        public DateTime CreationDate { get; set; } 
+
+        public DateTime DoneDate { get; set; }
 
         public string GoalText { get; set; } = string.Empty;
 
@@ -23,6 +25,8 @@ namespace BlazorServer.Entities
         public string Cause { get; set; } = string.Empty;
 
         public string Goal { get; set; } = string.Empty;
+
+        public bool IsDone { get; set; } = false;
 
         public AppointmentState Status { get; set; } = AppointmentState.NotStarted;
 

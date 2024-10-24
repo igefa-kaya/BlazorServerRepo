@@ -1,5 +1,4 @@
 ﻿@using Microsoft.AspNetCore.Components.Web
-@using Radzen.Blazor
 
 @namespace BlazorServer.Pages
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
@@ -9,12 +8,11 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <base href="~/" />
+    <base href="~/test" />
     <link href="css/site.css" rel="stylesheet" />
+    <link href="fa/css/all.min.css" rel="stylesheet" />
     <link href="BlazorServer.styles.css" rel="stylesheet" />
     <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
-    <component type="typeof(RadzenTheme)" render-mode="ServerPrerendered" param-Theme="@("material")" />
-
 </head>
 <body>
     @RenderBody()
@@ -27,7 +25,6 @@
     </div>
 
     <script src="_framework/blazor.server.js"></script>
-    <script src="_content/Radzen.Blazor/Radzen.Blazor.js?v=@(typeof(Radzen.Colors).Assembly.GetName().Version)"></script>
 
 </body>
 </html>

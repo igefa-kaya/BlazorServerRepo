@@ -1,60 +1,1060 @@
 ﻿@page "/test"
 @using System.Security.Claims
+@using BlazorServer.CustomComponents.Enum
+@using BlazorServer.Entities
 @using ITS.WWS.WebApp.Services
 @using Microsoft.Graph.Models
-
-<style>
-    .calendar {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr); /* 7 columns for the days of the week */
-        gap: 10px;
-    }
-
-    .calendar-day {
-        padding: 20px;
-        border: 1px solid #ccc;
-        text-align: center;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
-
-        .calendar-day:hover {
-            background-color: #f0f0f0; /* Highlight on hover */
-        }
-</style>
-
 
 <h3>Simple Calendar</h3>
 
 <button @onclick=" async () => await PostAppointmentTest()">Send Appointment</button>
 
-<div @onclick="HandleClick" data-date="2024-10-21" class="calendar-day">
-    <div class="calendar">
-        @foreach (Event appointment in Events)
-        {
-            <div class="calendar-day">
-                @appointment.Subject
-                @appointment.BodyPreview
+<div class="hscreen">
+
+
+    <div class="flex flex-col h-screen font-sans">
+        <!-- Header -->
+
+        <header class="flex flex-col z-10000">
+            <div class="h-2 bg-blue-navy w-full hidden"></div>
+            <div class="w-full drop-shadow-top-lg bg-white">
+                <div class="max-w-[1920px] flex justify-between mx-auto py-2 lg:py-3 px-3 lg:px-6 2xl:px-8">
+                    <div class="flex space-x-8 items-center">
+                        <div class="flex items-center py-1">
+                            <button type="button"
+                                    class="lg:hidden rounded-md h-10 w-10 mr-4 text-sm border border-gray-light font-semibold text-blue-navy hover:bg-blue-navy-hover hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-navy">
+                                <i class="fa-solid fa-bars"></i>
+                            </button>
+                            <img src="./static/logo.svg" class="w-18 h-auto" width="86">
+                        </div>
+                        <hr class="w-px h-10 border-l border-gray-light" />
+                        <strong class="text-blue-navy">Terminverwaltung</strong>
+                    </div>
+                    <div class="flex items-center space-x-2 lg:space-x-4">
+                        <button type="button"
+                                class="flex items-center justify-center rounded-md px-2.5 h-10 w-10 lg:w-auto text-sm font-semibold text-blue-navy hover:bg-blue-navy-hover hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-navy">
+                            <i class="fa-solid fa-arrow-right-from-bracket pr-2"></i><span class="hidden lg:inline-block">Ausloggen</span>
+                        </button>
+                    </div>
+                </div>
             </div>
-        }
+        </header>
+        <!-- /Header -->
+
+        <main class="xl:p-4 2xl:px-8 2xl:pt-6 max-w-[1920px] w-full mx-auto flex" style="flex: 1;">
+            <div class="w-full overflow-hidden flex items-center justify-center xl:border border-gray-light xl:rounded-l-md">
+                <div class="flex h-full flex-col w-full">
+                    <div class="w-full flex flex-col md:flex-row items-center justify-center gap-4 md:gap-0 md:justify-between border-b border-gray-light px-4 2xl:px-6 py-4">
+                        <div class="group relative flex items-center rounded-md bg-white hover:shadow-sm md:items-stretch">
+                            <button type="button"
+                                    class="flex h-9 items-center justify-center rounded-l-md border-y border-l border-transparent group-hover:border-blue-navy-hover pr-1 text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover focus:relative w-8 pr-0">
+                                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd"
+                                          d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
+                                          clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                            <button type="button"
+                                    class="h-9 border-y border-transparent group-hover:border-blue-navy-hover px-2 md:px-3.5 text-base font-extrabold text-blue-medium hover:text-white-opac hover:bg-blue-navy-hover focus:relative">
+                                <time datetime="2022-01"><span>August 2024</span></time>
+                            </button>
+                            <button type="button"
+                                    class="flex h-9 items-center justify-center rounded-r-md border-y border-r border-transparent group-hover:border-blue-navy-hover pl-1 text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover focus:relative w-8 pl-0">
+                                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd"
+                                          d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                                          clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="flex items-center gap-4">
+                                <button type="button"
+                                        class="flex items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-dark hover:text-white-opac shadow-sm ring-1 ring-inset ring-blue-navy hover:bg-blue-navy-hover"
+                                        id="menu-button" aria-expanded="false" aria-haspopup="true">
+                                    Alle Termine
+                                    <svg class="-mr-1 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"
+                                         aria-hidden="true">
+                                        <path fill-rule="evenodd"
+                                              d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                                              clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                                <button type="button"
+                                        class="flex items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-dark hover:text-white-opac shadow-sm ring-1 ring-inset ring-blue-navy hover:bg-blue-navy-hover"
+                                        id="menu-button" aria-expanded="false" aria-haspopup="true">
+                                    Ansicht: Monat
+                                    <svg class="-mr-1 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"
+                                         aria-hidden="true">
+                                        <path fill-rule="evenodd"
+                                              d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                                              clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                                <hr class="h-8 w-px border-l border-gray-light" />
+                                <button type="button"
+                                        class="rounded-md bg-blue-navy px-3 py-2 text-sm font-semibold text-white-opac shadow-sm hover:bg-blue-navy-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
+                                    <i class="fa-solid fa-plus pr-2"></i>Termin anlegen
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-auto flex-col">
+                        <div class="grid grid-cols-7 gap-px bg-gray-light border-b border-gray-light text-center text-xs lg:text-sm font-semibold text-blue-navy lg:flex-none">
+                            @foreach (string weekday in Enum.GetNames(typeof(WeekDay)))
+                            {
+                                <div class="flex justify-center bg-white py-2">
+                                    <span>@weekday</span>
+                                </div>
+
+                            }
+                        </div>
+                        <div class="flex bg-gray-light text-xs leading-6 text-gray-700 flex-auto">
+                            <div class="w-full grid grid-cols-7 grid-rows-6 gap-px">
+
+                                <div>
+                                    @*                             <!-- START Tage aus vorherigem Monat -->
+                                    <div class="relative bg-bluegray-soft px-3 py-2 text-bluegray-medium">
+                                    <time datetime="2021-12-27">27</time>
+                                    </div>
+                                    <div class="relative bg-bluegray-soft px-3 py-2 text-gray-medium">
+                                    <time datetime="2021-12-28">28</time>
+                                    </div>
+                                    <div class="relative bg-bluegray-soft px-3 py-2 text-gray-medium">
+                                    <time datetime="2021-12-29">29</time>
+                                    </div>
+                                    <div class="relative bg-bluegray-soft px-3 py-2 text-gray-medium">
+                                    <time datetime="2021-12-30">30</time>
+                                    </div>
+                                    <div class="relative bg-bluegray-soft px-3 py-2 text-gray-medium">
+                                    <time datetime="2021-12-31">31</time>
+                                    </div>
+                                    <!-- ENDE Tage aus vorherigem Monat --> *@
+
+                                </div>
+                                @foreach (DateTime time in Days)
+                                {
+                                    //Iterates through received Appointments
+                                    @foreach (Appointment appointment in Appointments)
+                                    {
+
+                                        //Iterates through DailyReports
+                                        @foraech(DailyReport dailyreport in DailyReports)
+                                        if (time.Day == appointment.AppointmentDate.Day)
+                                        {
+                                            if (appointment.IsDone)
+                                            {
+                                                AppointmentClassTextColor = "text-green-medium";
+
+                                            }
+                                            else if (!appointment.IsDone && DateTime.Now.Date > appointment.AppointmentDate.Date)
+                                            {
+                                                AppointmentClassTextColor = "text-orange";
+                                            }
+                                            else
+                                            {
+                                                AppointmentClassTextColor = "text-gray-dark";
+                                            }
+                                            <!-- START Kalender-Tag mit Tagesbericht und erledigte Termine -->
+                                            <div class="group relative bg-green-soft hover:bg-blue-soft">
+                                                <div class="flex justify-between items-center pl-2 2xl:pl-3 pt-1 h-7">
+                                                    <time datetime="2022-01-03" class="text-gray-dark">@time.Day</time>
+                                                    <div class="flex flex-row space-x-1 pr-1">
+                                                        <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-base">
+                                                            <i class="fa-solid fa-plus"></i>
+                                                        </button>
+                                                        <button class="text-gray-dark hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-sm">
+                                                            <i class="fa-regular fa-calendar-lines-pen"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <ol class="mt-1 px-1 h-8 text-xs">
+                                                    <li>
+                                                        <a href="#"
+                                                           class="flex @AppointmentClassTextColor hover:text-white-opac hover:bg-blue-navy-hover px-1 2xl:px-2 py-0.5 2xl:py-1 rounded-md">
+                                                            <span class="flex-auto truncate">@appointment.GoalText</span>
+                                                            <time datetime="2022-01-03T10:00"
+                                                                  class="ml-3 hidden flex-none xl:block">@appointment.DoneDate.TimeOfDay</time>
+                                                        </a>
+                                                    </li>
+                                                </ol>
+                                            </div>
+                                            <!-- ENDE Kalender-Tag mit Tagesbericht und erledigte Termine -->
+                                        }
+
+
+                                    }
+                                    <div @onclick="HandleClick" class="group flex flex-col relative bg-white hover:bg-blue-soft overflow-hidden">
+                                        <div class="flex justify-between items-center pl-2 2xl:pl-3 pt-1 h-7">
+                                            <time datetime="2022-01-01">@time.Day</time>
+                                            <div class="flex flex-row space-x-1 pr-1">
+                                                <button @onclick="PlaceHolder" class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-base">
+                                                    <i class="fa-solid fa-plus"></i>
+                                                </button>
+                                                <button @onclick="PlaceHolder" class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-sm">
+                                                    <i class="fa-regular fa-calendar-lines-pen"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+
+
+                                <!-- START Kalender-Tag ausgewählt/angeklickt, sodass Termine in rechter Spalte angezeigt werden -->
+                                <div class="group flex flex-col relative bg-blue-soft border border-blue-medium rounded hover:bg-blue-soft overflow-hidden">
+                                    <div class="flex justify-between items-center pl-2 2xl:pl-3 pt-1 h-7">
+                                        <time datetime="2022-01-03" class="font-extrabold text-blue-medium">4</time>
+                                        <div class="flex flex-row space-x-1 pr-1">
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-base">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-sm">
+                                                <i class="fa-regular fa-calendar-lines-pen"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <ol class="mt-1 px-1 h-8 text-xs">
+                                        <li>
+                                            <a href="#"
+                                               class="flex text-gray-dark hover:text-white-opac hover:bg-blue-navy-hover px-1 2xl:px-2 py-0.5 2xl:py-1 rounded-md">
+                                                <span class="flex-auto truncate">Hotel Bachmann</span>
+                                                <time datetime="2022-01-03T10:00"
+                                                      class="ml-3 hidden flex-none xl:block">09:00</time>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#"
+                                               class="flex text-gray-dark hover:text-white-opac hover:bg-blue-navy-hover px-1 2xl:px-2 py-0.5 2xl:py-1 rounded-md">
+                                                <span class="flex-auto truncate">Pflegeheim Rosengarten Nord</span>
+                                                <time datetime="2022-01-03T10:00"
+                                                      class="ml-3 hidden flex-none xl:block">12:00</time>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#"
+                                               class="flex text-gray-dark hover:text-white-opac hover:bg-blue-navy-hover px-1 2xl:px-2 py-0.5 2xl:py-1 rounded-md">
+                                                <span class="flex-auto truncate">Termin Reinigungsmittel</span>
+                                                <time datetime="2022-01-03T10:00"
+                                                      class="ml-3 hidden flex-none xl:block">14:30</time>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#"
+                                               class="flex text-gray-dark hover:text-white-opac hover:bg-blue-navy-hover px-1 2xl:px-2 py-0.5 2xl:py-1 rounded-md">
+                                                <span class="flex-auto truncate">Termin Reinigungsmittel</span>
+                                                <time datetime="2022-01-03T10:00"
+                                                      class="ml-3 hidden flex-none xl:block">14:30</time>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#"
+                                               class="flex text-gray-dark hover:text-white-opac hover:bg-blue-navy-hover px-1 2xl:px-2 py-0.5 2xl:py-1 rounded-md">
+                                                <span class="flex-auto truncate">Termin Reinigungsmittel</span>
+                                                <time datetime="2022-01-03T10:00"
+                                                      class="ml-3 hidden flex-none xl:block">14:30</time>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#"
+                                               class="flex text-gray-dark hover:text-white-opac hover:bg-blue-navy-hover px-1 2xl:px-2 py-0.5 2xl:py-1 rounded-md">
+                                                <span class="flex-auto truncate">Termin Reinigungsmittel</span>
+                                                <time datetime="2022-01-03T10:00"
+                                                      class="ml-3 hidden flex-none xl:block">14:30</time>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#"
+                                               class="flex text-gray-dark hover:text-white-opac hover:bg-blue-navy-hover px-1 2xl:px-2 py-0.5 2xl:py-1 rounded-md">
+                                                <span class="flex-auto truncate">Termin Reinigungsmittel</span>
+                                                <time datetime="2022-01-03T10:00"
+                                                      class="ml-3 hidden flex-none xl:block">14:30</time>
+                                            </a>
+                                        </li>
+
+                                    </ol>
+                                    <div class="absolute bottom-0 w-full bg-gradient-to-b from-transparent to-blue-soft group-hover:to-blue-soft h-8 xl:h-10 py-2 px-2 flex items-end justify-center">
+                                        <a href="#"
+                                           class="flex text-white-opac px-2 py-1 w-fit justify-end inline-block font-semibold text-xxs bg-bluegray-medium hover:bg-blue-navy-hover rounded-full truncate">
+                                            <span>+ weitere</span>
+                                        </a>
+                                    </div>
+                                </div>
+                                <!-- ENDE Kalender-Tag ausgewählt/angeklickt, sodass Termine in rechter Spalte angezeigt werden -->
+                                <!-- START Kalender-Tag mit storniertem Termin -->
+                                <div class="group relative bg-white hover:bg-blue-soft">
+                                    <div class="flex justify-between items-center pl-2 2xl:pl-3 pt-1 h-7">
+                                        <time datetime="2022-01-03">5</time>
+                                        <div class="flex flex-row space-x-1 pr-1">
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-base">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-sm">
+                                                <i class="fa-regular fa-calendar-lines-pen"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <ol class="mt-1 px-1 h-8 text-xs">
+                                        <li>
+                                            <a href="#"
+                                               class="flex text-gray-dark hover:text-white-opac hover:bg-blue-navy-hover px-1 2xl:px-2 py-0.5 2xl:py-1 rounded-md">
+                                                <span class="flex-auto truncate">Design review</span>
+                                                <time datetime="2022-01-03T10:00"
+                                                      class="ml-3 hidden flex-none xl:block">09:00</time>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#"
+                                               class="flex text-orange hover:text-white-opac hover:bg-blue-navy-hover px-1 2xl:px-2 py-0.5 2xl:py-1 rounded-md">
+                                                <span class="flex-auto truncate">Design review</span>
+                                                <time datetime="2022-01-03T10:00"
+                                                      class="ml-3 hidden flex-none xl:block">09:00</time>
+                                            </a>
+                                        </li>
+                                    </ol>
+                                </div>
+                                <!-- ENDE Kalender-Tag mit storniertem Termin -->
+                                <!-- START Kalender-Tag vielen Terminen und Badge "weitere Einträge" -->
+                                <div class="group flex flex-col relative bg-white hover:bg-blue-soft overflow-hidden">
+                                    <div class="flex justify-between items-center pl-2 2xl:pl-3 pt-1 h-7">
+                                        <time datetime="2024-10-23" class="">6</time>
+                                        <div class="flex flex-row space-x-1 pr-1">
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-base">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-sm">
+                                                <i class="fa-regular fa-calendar-lines-pen"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <ol class="mt-1 px-1 h-8 text-xs">
+                                        <li>
+                                            <a href="#"
+                                               class="flex text-gray-dark hover:text-white-opac hover:bg-blue-navy-hover px-1 2xl:px-2 py-0.5 2xl:py-1 rounded-md">
+                                                <span class="flex-auto truncate">Hotel Bachmann</span>
+                                                <time datetime="2022-01-03T10:00"
+                                                      class="ml-3 hidden flex-none xl:block">09:00</time>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#"
+                                               class="flex text-gray-dark hover:text-white-opac hover:bg-blue-navy-hover px-1 2xl:px-2 py-0.5 2xl:py-1 rounded-md">
+                                                <span class="flex-auto truncate">Pflegeheim Rosengarten Nord</span>
+                                                <time datetime="2022-01-03T10:00"
+                                                      class="ml-3 hidden flex-none xl:block">12:00</time>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#"
+                                               class="flex text-gray-dark hover:text-white-opac hover:bg-blue-navy-hover px-1 2xl:px-2 py-0.5 2xl:py-1 rounded-md">
+                                                <span class="flex-auto truncate">Termin Reinigungsmittel</span>
+                                                <time datetime="2022-01-03T10:00"
+                                                      class="ml-3 hidden flex-none xl:block">14:30</time>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#"
+                                               class="flex text-gray-dark hover:text-white-opac hover:bg-blue-navy-hover px-1 2xl:px-2 py-0.5 2xl:py-1 rounded-md">
+                                                <span class="flex-auto truncate">Termin Reinigungsmittel</span>
+                                                <time datetime="2022-01-03T10:00"
+                                                      class="ml-3 hidden flex-none xl:block">14:30</time>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#"
+                                               class="flex text-gray-dark hover:text-white-opac hover:bg-blue-navy-hover px-1 2xl:px-2 py-0.5 2xl:py-1 rounded-md">
+                                                <span class="flex-auto truncate">Termin Reinigungsmittel</span>
+                                                <time datetime="2022-01-03T10:00"
+                                                      class="ml-3 hidden flex-none xl:block">14:30</time>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#"
+                                               class="flex text-gray-dark hover:text-white-opac hover:bg-blue-navy-hover px-1 2xl:px-2 py-0.5 2xl:py-1 rounded-md">
+                                                <span class="flex-auto truncate">Termin Reinigungsmittel</span>
+                                                <time datetime="2022-01-03T10:00"
+                                                      class="ml-3 hidden flex-none xl:block">14:30</time>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#"
+                                               class="flex text-gray-dark hover:text-white-opac hover:bg-blue-navy-hover px-1 2xl:px-2 py-0.5 2xl:py-1 rounded-md">
+                                                <span class="flex-auto truncate">Termin Reinigungsmittel</span>
+                                                <time datetime="2022-01-03T10:00"
+                                                      class="ml-3 hidden flex-none xl:block">14:30</time>
+                                            </a>
+                                        </li>
+
+                                    </ol>
+                                    <div class="absolute bottom-0 w-full bg-gradient-to-b from-transparent to-white group-hover:to-blue-soft h-8 xl:h-10 py-2 px-2 flex items-end justify-center">
+                                        <a href="#"
+                                           class="flex text-white px-2 py-1 w-fit justify-end inline-block font-semibold text-xxs bg-bluegray-medium hover:bg-blue-navy-hover rounded-full truncate">
+                                            <span>+ weitere</span>
+                                        </a>
+                                    </div>
+                                </div>
+                                <!-- START Kalender-Tag vielen Terminen und Badge "weitere Einträge" -->
+
+                                <div class="group flex flex-col relative bg-white hover:bg-blue-soft overflow-hidden">
+                                    <div class="flex justify-between items-center pl-2 2xl:pl-3 pt-1 h-7">
+                                        <time datetime="2022-01-07">7</time>
+                                        <div class="flex flex-row space-x-1 pr-1">
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-base">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-sm">
+                                                <i class="fa-regular fa-calendar-lines-pen"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="group flex flex-col relative bg-white hover:bg-blue-soft overflow-hidden">
+                                    <div class="flex justify-between items-center pl-2 2xl:pl-3 pt-1 h-7">
+                                        <time datetime="2022-01-08">8</time>
+                                        <div class="flex flex-row space-x-1 pr-1">
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-base">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-sm">
+                                                <i class="fa-regular fa-calendar-lines-pen"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="group flex flex-col relative bg-white hover:bg-blue-soft overflow-hidden">
+                                    <div class="flex justify-between items-center pl-2 2xl:pl-3 pt-1 h-7">
+                                        <time datetime="2022-01-09">9</time>
+                                        <div class="flex flex-row space-x-1 pr-1">
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-base">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-sm">
+                                                <i class="fa-regular fa-calendar-lines-pen"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="group flex flex-col relative bg-white hover:bg-blue-soft overflow-hidden">
+                                    <div class="flex justify-between items-center pl-2 2xl:pl-3 pt-1 h-7">
+                                        <time datetime="2022-01-10">10</time>
+                                        <div class="flex flex-row space-x-1 pr-1">
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-base">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-sm">
+                                                <i class="fa-regular fa-calendar-lines-pen"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="group flex flex-col relative bg-white hover:bg-blue-soft overflow-hidden">
+                                    <div class="flex justify-between items-center pl-2 2xl:pl-3 pt-1 h-7">
+                                        <time datetime="2022-01-11">11</time>
+                                        <div class="flex flex-row space-x-1 pr-1">
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-base">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-sm">
+                                                <i class="fa-regular fa-calendar-lines-pen"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="group flex flex-col relative bg-white hover:bg-blue-soft overflow-hidden">
+                                    <div class="flex justify-between items-center pl-2 2xl:pl-3 pt-1 h-7">
+                                        <time datetime="2022-01-12">12</time>
+                                        <div class="flex flex-row space-x-1 pr-1">
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-base">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-sm">
+                                                <i class="fa-regular fa-calendar-lines-pen"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="group flex flex-col relative bg-white hover:bg-blue-soft overflow-hidden">
+                                    <div class="flex justify-between items-center pl-2 2xl:pl-3 pt-1 h-7">
+                                        <time datetime="2022-01-13">13</time>
+                                        <div class="flex flex-row space-x-1 pr-1">
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-base">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-sm">
+                                                <i class="fa-regular fa-calendar-lines-pen"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="group flex flex-col relative bg-white hover:bg-blue-soft overflow-hidden">
+                                    <div class="flex justify-between items-center pl-2 2xl:pl-3 pt-1 h-7">
+                                        <time datetime="2022-01-14">14</time>
+                                        <div class="flex flex-row space-x-1 pr-1">
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-base">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-sm">
+                                                <i class="fa-regular fa-calendar-lines-pen"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="group flex flex-col relative bg-white hover:bg-blue-soft overflow-hidden">
+                                    <div class="flex justify-between items-center pl-2 2xl:pl-3 pt-1 h-7">
+                                        <time datetime="2022-01-15">15</time>
+                                        <div class="flex flex-row space-x-1 pr-1">
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-base">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-sm">
+                                                <i class="fa-regular fa-calendar-lines-pen"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="group flex flex-col relative bg-white hover:bg-blue-soft overflow-hidden">
+                                    <div class="flex justify-between items-center pl-2 2xl:pl-3 pt-1 h-7">
+                                        <time datetime="2022-01-16">16</time>
+                                        <div class="flex flex-row space-x-1 pr-1">
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-base">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-sm">
+                                                <i class="fa-regular fa-calendar-lines-pen"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="group flex flex-col relative bg-white hover:bg-blue-soft overflow-hidden">
+                                    <div class="flex justify-between items-center pl-2 2xl:pl-3 pt-1 h-7">
+                                        <time datetime="2022-01-17">17</time>
+                                        <div class="flex flex-row space-x-1 pr-1">
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-base">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-sm">
+                                                <i class="fa-regular fa-calendar-lines-pen"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="group flex flex-col relative bg-white hover:bg-blue-soft overflow-hidden">
+                                    <div class="flex justify-between items-center pl-2 2xl:pl-3 pt-1 h-7">
+                                        <time datetime="2022-01-18">18</time>
+                                        <div class="flex flex-row space-x-1 pr-1">
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-base">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-sm">
+                                                <i class="fa-regular fa-calendar-lines-pen"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="group flex flex-col relative bg-white hover:bg-blue-soft overflow-hidden">
+                                    <div class="flex justify-between items-center pl-2 2xl:pl-3 pt-1 h-7">
+                                        <time datetime="2022-01-19">19</time>
+                                        <div class="flex flex-row space-x-1 pr-1">
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-base">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-sm">
+                                                <i class="fa-regular fa-calendar-lines-pen"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="group flex flex-col relative bg-white hover:bg-blue-soft overflow-hidden">
+                                    <div class="flex justify-between items-center pl-2 2xl:pl-3 pt-1 h-7">
+                                        <time datetime="2022-01-20">20</time>
+                                        <div class="flex flex-row space-x-1 pr-1">
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-base">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-sm">
+                                                <i class="fa-regular fa-calendar-lines-pen"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="group flex flex-col relative bg-white hover:bg-blue-soft overflow-hidden">
+                                    <div class="flex justify-between items-center pl-2 2xl:pl-3 pt-1 h-7">
+                                        <time datetime="2022-01-20">20</time>
+                                        <div class="flex flex-row space-x-1 pr-1">
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-base">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-sm">
+                                                <i class="fa-regular fa-calendar-lines-pen"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="group flex flex-col relative bg-white hover:bg-blue-soft overflow-hidden">
+                                    <div class="flex justify-between items-center pl-2 2xl:pl-3 pt-1 h-7">
+                                        <time datetime="2022-01-20">20</time>
+                                        <div class="flex flex-row space-x-1 pr-1">
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-base">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-sm">
+                                                <i class="fa-regular fa-calendar-lines-pen"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="group flex flex-col relative bg-white hover:bg-blue-soft overflow-hidden">
+                                    <div class="flex justify-between items-center pl-2 2xl:pl-3 pt-1 h-7">
+                                        <time datetime="2022-01-20">20</time>
+                                        <div class="flex flex-row space-x-1 pr-1">
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-base">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-sm">
+                                                <i class="fa-regular fa-calendar-lines-pen"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="group flex flex-col relative bg-white hover:bg-blue-soft overflow-hidden">
+                                    <div class="flex justify-between items-center pl-2 2xl:pl-3 pt-1 h-7">
+                                        <time datetime="2022-01-20">20</time>
+                                        <div class="flex flex-row space-x-1 pr-1">
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-base">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-sm">
+                                                <i class="fa-regular fa-calendar-lines-pen"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="group flex flex-col relative bg-white hover:bg-blue-soft overflow-hidden">
+                                    <div class="flex justify-between items-center pl-2 2xl:pl-3 pt-1 h-7">
+                                        <time datetime="2022-01-20">20</time>
+                                        <div class="flex flex-row space-x-1 pr-1">
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-base">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-sm">
+                                                <i class="fa-regular fa-calendar-lines-pen"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="group flex flex-col relative bg-white hover:bg-blue-soft overflow-hidden">
+                                    <div class="flex justify-between items-center pl-2 2xl:pl-3 pt-1 h-7">
+                                        <time datetime="2022-01-20">20</time>
+                                        <div class="flex flex-row space-x-1 pr-1">
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-base">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-sm">
+                                                <i class="fa-regular fa-calendar-lines-pen"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="group flex flex-col relative bg-white hover:bg-blue-soft overflow-hidden">
+                                    <div class="flex justify-between items-center pl-2 2xl:pl-3 pt-1 h-7">
+                                        <time datetime="2022-01-20">20</time>
+                                        <div class="flex flex-row space-x-1 pr-1">
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-base">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-sm">
+                                                <i class="fa-regular fa-calendar-lines-pen"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="group flex flex-col relative bg-white hover:bg-blue-soft overflow-hidden">
+                                    <div class="flex justify-between items-center pl-2 2xl:pl-3 pt-1 h-7">
+                                        <time datetime="2022-01-20">20</time>
+                                        <div class="flex flex-row space-x-1 pr-1">
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-base">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-sm">
+                                                <i class="fa-regular fa-calendar-lines-pen"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="group flex flex-col relative bg-white hover:bg-blue-soft overflow-hidden">
+                                    <div class="flex justify-between items-center pl-2 2xl:pl-3 pt-1 h-7">
+                                        <time datetime="2022-01-20">20</time>
+                                        <div class="flex flex-row space-x-1 pr-1">
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-base">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-sm">
+                                                <i class="fa-regular fa-calendar-lines-pen"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="group flex flex-col relative bg-white hover:bg-blue-soft overflow-hidden">
+                                    <div class="flex justify-between items-center pl-2 2xl:pl-3 pt-1 h-7">
+                                        <time datetime="2022-01-20">20</time>
+                                        <div class="flex flex-row space-x-1 pr-1">
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-base">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-sm">
+                                                <i class="fa-regular fa-calendar-lines-pen"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="group flex flex-col relative bg-white hover:bg-blue-soft overflow-hidden">
+                                    <div class="flex justify-between items-center pl-2 2xl:pl-3 pt-1 h-7">
+                                        <time datetime="2022-01-20">20</time>
+                                        <div class="flex flex-row space-x-1 pr-1">
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-base">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                            <button class="hidden group-hover:block text-blue-navy hover:text-white-opac hover:bg-blue-navy-hover h-7 w-7 flex items-center justify-center rounded-md text-sm">
+                                                <i class="fa-regular fa-calendar-lines-pen"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="relative bg-bluegray-soft px-3 py-2 text-gray-medium">
+                                    <time datetime="2022-02-01">1</time>
+                                </div>
+                                <div class="relative bg-bluegray-soft px-3 py-2 text-gray-medium">
+                                    <time datetime="2022-02-02">2</time>
+                                </div>
+                                <div class="relative bg-bluegray-soft px-3 py-2 text-gray-medium">
+                                    <time datetime="2022-02-03">3</time>
+                                </div>
+                                <div class="relative bg-bluegray-soft px-3 py-2 text-gray-medium">
+                                    <time datetime="2022-02-04">4</time>
+                                </div>
+                                <div class="relative bg-bluegray-soft px-3 py-2 text-gray-medium">
+                                    <time datetime="2022-02-05">5</time>
+                                </div>
+                                <div class="relative bg-bluegray-soft px-3 py-2 text-gray-medium">
+                                    <time datetime="2022-02-06">6</time>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- START Rechte Seitenleiste für große Screens -->
+            <div class="absolute right-0 top-0 pt-[68px] lg:pt-[76px] xl:pt-0 xl:relative shadow-2xl xl:shadow-none flex shrink-0 w-[450px] xl:w-[380px] 2xl:w-[410px] h-full overflow-auto xl:border-y xl:border-r xl:border-gray-light bg-white px-8 xl:px-4 2xl:px-6 xl:rounded-r-md">
+                <div class="relative flex flex-col gap-8 h-16 w-full pt-20">
+                    <div class="fixed xl:relative -mt-20 flex items-center justify-between font-extrabold text-blue-medium text-xl py-4 bg-white w-full max-w-[400px]">
+                        <h2 class="h-8 flex items-center">Ihre nächsten Termine</h2>
+                        <button type="button"
+                                class="block xl:hidden flex items-center justify-center gap-x-1.5 rounded-full bg-white w-8 h-8 text-lg font-semibold text-blue-navy hover:text-white-opac hover:bg-blue-navy"
+                                id="menu-button" aria-expanded="false" aria-haspopup="true">
+                            <i class="fa-solid fa-close"></i>
+                        </button>
+                    </div>
+
+                    <!-- START Button für Tagesbericht: Nur wenn bestimmter Tag ausgewählt wurde -->
+                    <div class="flex justify-end">
+                        <button type="button"
+                                class="w-fit rounded-md bg-white px-3 py-2 text-sm font-semibold text-blue-navy hover:text-white-opac shadow-sm hover:bg-blue-navy-hover ring-1 ring-inset ring-blue-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-medium">
+                            <i class="fa-regular fa-calendar-lines-pen pr-2"></i>Tagesbericht erstellen
+                        </button>
+                    </div>
+                    <!-- ENDE Button für Tagesbericht: Nur wenn bestimmter Tag ausgewählt wurde -->
+
+                    <div class="flex flex-col space-y-8 pb-8">
+
+                        <div class="flex items-center space-x-2 w-full">
+                            <span class="uppercase text-blue-navy text-xs font-extrabold tracking-wider">Heute</span>
+                            <hr class="w-full h-px border-t border-gray-light" />
+                        </div>
+                        <div class="flex flex-col space-y-2">
+                            <div class="flex items-center border border-green-medium text-green-medium p-4 space-x-4 rounded-md hover:border-blue-medium bg-green-soft hover:bg-blue-soft hover:shadow-lg">
+                                <div class="w-full flex flex-col space-y-2">
+                                    <div class="flex w-full text-sm gap-4">
+                                        <span class="inline-block">
+                                            <i class="fa-regular fa-calendar-clock pr-2"></i>28.08.2024 - 08:00 bis 09:30
+                                            Uhr
+                                        </span>
+                                    </div>
+                                    <hr class="w-full h-px border-t border-gray-light" />
+                                    <div class="flex flex-col text-sm">
+                                        <strong>Pflegeheim Rosengarten Nord</strong>
+                                        <span>Termin zur Klärung des Bedarfs</span>
+                                    </div>
+                                </div>
+                                <div class="flex justify-end w-12">
+                                    <button type="button"
+                                            class="flex items-center justify-center gap-x-1.5 rounded-md bg-green-medium w-8 h-8 text-sm font-semibold text-white-opac hover:text-white-opac shadow-sm ring-1 ring-inset ring-green-medium hover:bg-blue-navy"
+                                            id="menu-button" aria-expanded="false" aria-haspopup="true">
+                                        <i class="fa-solid fa-check"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center border border-gray-light p-4 space-x-4 rounded-md hover:border-blue-medium bg-white hover:bg-blue-soft hover:shadow-lg">
+                                <div class="w-full flex flex-col space-y-2">
+                                    <div class="flex w-full text-blue-navy text-sm gap-4">
+                                        <span class="inline-block">
+                                            <i class="fa-regular fa-calendar-clock pr-2"></i>28.08.2024 - 08:00 bis 09:30
+                                            Uhr
+                                        </span>
+                                    </div>
+                                    <hr class="w-full h-px border-t border-gray-light" />
+                                    <div class="flex flex-col text-blue-navy text-sm">
+                                        <strong>Pflegeheim Rosengarten Nord</strong>
+                                        <span>Termin zur Klärung des Bedarfs</span>
+                                    </div>
+                                </div>
+                                <div class="flex justify-end w-12">
+                                    <button type="button"
+                                            class="flex items-center justify-center gap-x-1.5 rounded-md bg-white w-8 h-8 text-sm font-semibold text-gray-dark hover:text-white-opac shadow-sm ring-1 ring-inset ring-blue-navy hover:bg-blue-navy"
+                                            id="menu-button" aria-expanded="false" aria-haspopup="true">
+                                        <i class="fa-solid fa-check"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center border border-gray-light p-4 space-x-4 rounded-md hover:border-blue-medium bg-white hover:bg-blue-soft hover:shadow-lg">
+                                <div class="w-full flex flex-col space-y-2">
+                                    <div class="flex w-full text-blue-navy text-sm gap-4">
+                                        <span class="inline-block">
+                                            <i class="fa-regular fa-calendar-clock pr-2"></i>28.08.2024 - 08:00 bis 09:30
+                                            Uhr
+                                        </span>
+                                    </div>
+                                    <hr class="w-full h-px border-t border-gray-light" />
+                                    <div class="flex flex-col text-blue-navy text-sm">
+                                        <strong>Pflegeheim Rosengarten Nord</strong>
+                                        <span>Termin zur Klärung des Bedarfs</span>
+                                    </div>
+                                </div>
+                                <div class="flex justify-end w-12">
+                                    <button type="button"
+                                            class="flex items-center justify-center gap-x-1.5 rounded-md bg-white w-8 h-8 text-sm font-semibold text-gray-dark hover:text-white-opac shadow-sm ring-1 ring-inset ring-blue-navy hover:bg-blue-navy"
+                                            id="menu-button" aria-expanded="false" aria-haspopup="true">
+                                        <i class="fa-solid fa-check"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2 w-full">
+                            <span class="uppercase text-blue-navy text-xs font-extrabold tracking-wider">Weitere</span>
+                            <hr class="w-full h-px border-t border-gray-light" />
+                        </div>
+                        <div class="flex flex-col space-y-2 ">
+                            <div class="flex items-center border border-gray-light p-4 space-x-4 rounded-md hover:border-blue-medium bg-white hover:bg-blue-soft hover:shadow-lg">
+                                <div class="w-full flex flex-col space-y-2">
+                                    <div class="flex w-full text-blue-navy text-sm gap-4">
+                                        <span class="inline-block">
+                                            <i class="fa-regular fa-calendar-clock pr-2"></i>28.08.2024 - 08:00 bis 09:30
+                                            Uhr
+                                        </span>
+                                    </div>
+                                    <hr class="w-full h-px border-t border-gray-light" />
+                                    <div class="flex flex-col text-blue-navy text-sm">
+                                        <strong>Pflegeheim Rosengarten Nord</strong>
+                                        <span>Termin zur Klärung des Bedarfs</span>
+                                    </div>
+                                </div>
+                                <div class="flex justify-end w-12">
+                                    <button type="button"
+                                            class="flex items-center justify-center gap-x-1.5 rounded-md bg-white w-8 h-8 text-sm font-semibold text-gray-dark hover:text-white-opac shadow-sm ring-1 ring-inset ring-blue-navy hover:bg-blue-navy"
+                                            id="menu-button" aria-expanded="false" aria-haspopup="true">
+                                        <i class="fa-solid fa-check"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center border border-gray-light p-4 space-x-4 rounded-md hover:border-blue-medium bg-white hover:bg-blue-soft hover:shadow-lg">
+                                <div class="w-full flex flex-col space-y-2">
+                                    <div class="flex w-full text-blue-navy text-sm gap-4">
+                                        <span class="inline-block">
+                                            <i class="fa-regular fa-calendar-clock pr-2"></i>28.08.2024 - 08:00 bis 09:30
+                                            Uhr
+                                        </span>
+                                    </div>
+                                    <hr class="w-full h-px border-t border-gray-light" />
+                                    <div class="flex flex-col text-blue-navy text-sm">
+                                        <strong>Pflegeheim Rosengarten Nord</strong>
+                                        <span>Termin zur Klärung des Bedarfs</span>
+                                    </div>
+                                </div>
+                                <div class="flex justify-end w-12">
+                                    <button type="button"
+                                            class="flex items-center justify-center gap-x-1.5 rounded-md bg-white w-8 h-8 text-sm font-semibold text-gray-dark hover:text-white-opac shadow-sm ring-1 ring-inset ring-blue-navy hover:bg-blue-navy"
+                                            id="menu-button" aria-expanded="false" aria-haspopup="true">
+                                        <i class="fa-solid fa-check"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center border border-gray-light p-4 space-x-4 rounded-md hover:border-blue-medium bg-white hover:bg-blue-soft hover:shadow-lg">
+                                <div class="w-full flex flex-col space-y-2">
+                                    <div class="flex w-full text-blue-navy text-sm gap-4">
+                                        <span class="inline-block">
+                                            <i class="fa-regular fa-calendar-clock pr-2"></i>28.08.2024 - 08:00 bis 09:30
+                                            Uhr
+                                        </span>
+                                    </div>
+                                    <hr class="w-full h-px border-t border-gray-light" />
+                                    <div class="flex flex-col text-blue-navy text-sm">
+                                        <strong>Pflegeheim Rosengarten Nord</strong>
+                                        <span>Termin zur Klärung des Bedarfs</span>
+                                    </div>
+                                </div>
+                                <div class="flex justify-end w-12">
+                                    <button type="button"
+                                            class="flex items-center justify-center gap-x-1.5 rounded-md bg-white w-8 h-8 text-sm font-semibold text-gray-dark hover:text-white-opac shadow-sm ring-1 ring-inset ring-blue-navy hover:bg-blue-navy"
+                                            id="menu-button" aria-expanded="false" aria-haspopup="true">
+                                        <i class="fa-solid fa-check"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center border border-gray-light p-4 space-x-4 rounded-md hover:border-blue-medium bg-white hover:bg-blue-soft hover:shadow-lg">
+                                <div class="w-full flex flex-col space-y-2">
+                                    <div class="flex w-full text-blue-navy text-sm gap-4">
+                                        <span class="inline-block">
+                                            <i class="fa-regular fa-calendar-clock pr-2"></i>28.08.2024 - 08:00 bis 09:30
+                                            Uhr
+                                        </span>
+                                    </div>
+                                    <hr class="w-full h-px border-t border-gray-light" />
+                                    <div class="flex flex-col text-blue-navy text-sm">
+                                        <strong>Pflegeheim Rosengarten Nord</strong>
+                                        <span>Termin zur Klärung des Bedarfs</span>
+                                    </div>
+                                </div>
+                                <div class="flex justify-end w-12">
+                                    <button type="button"
+                                            class="flex items-center justify-center gap-x-1.5 rounded-md bg-white w-8 h-8 text-sm font-semibold text-gray-dark hover:text-white-opac shadow-sm ring-1 ring-inset ring-blue-navy hover:bg-blue-navy"
+                                            id="menu-button" aria-expanded="false" aria-haspopup="true">
+                                        <i class="fa-solid fa-check"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center border border-gray-light p-4 space-x-4 rounded-md hover:border-blue-medium bg-white hover:bg-blue-soft hover:shadow-lg">
+                                <div class="w-full flex flex-col space-y-2">
+                                    <div class="flex w-full text-blue-navy text-sm gap-4">
+                                        <span class="inline-block">
+                                            <i class="fa-regular fa-calendar-clock pr-2"></i>28.08.2024 - 08:00 bis 09:30
+                                            Uhr
+                                        </span>
+                                    </div>
+                                    <hr class="w-full h-px border-t border-gray-light" />
+                                    <div class="flex flex-col text-blue-navy text-sm">
+                                        <strong>Pflegeheim Rosengarten Nord</strong>
+                                        <span>Termin zur Klärung des Bedarfs</span>
+                                    </div>
+                                </div>
+                                <div class="flex justify-end w-12">
+                                    <button type="button"
+                                            class="flex items-center justify-center gap-x-1.5 rounded-md bg-white w-8 h-8 text-sm font-semibold text-gray-dark hover:text-white-opac shadow-sm ring-1 ring-inset ring-blue-navy hover:bg-blue-navy"
+                                            id="menu-button" aria-expanded="false" aria-haspopup="true">
+                                        <i class="fa-solid fa-check"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center border border-gray-light p-4 space-x-4 rounded-md hover:border-blue-medium bg-white hover:bg-blue-soft hover:shadow-lg">
+                                <div class="w-full flex flex-col space-y-2">
+                                    <div class="flex w-full text-blue-navy text-sm gap-4">
+                                        <span class="inline-block">
+                                            <i class="fa-regular fa-calendar-clock pr-2"></i>28.08.2024 - 08:00 bis 09:30
+                                            Uhr
+                                        </span>
+                                    </div>
+                                    <hr class="w-full h-px border-t border-gray-light" />
+                                    <div class="flex flex-col text-blue-navy text-sm">
+                                        <strong>Pflegeheim Rosengarten Nord</strong>
+                                        <span>Termin zur Klärung des Bedarfs</span>
+                                    </div>
+                                </div>
+                                <div class="flex justify-end w-12">
+                                    <button type="button"
+                                            class="flex items-center justify-center gap-x-1.5 rounded-md bg-white w-8 h-8 text-sm font-semibold text-gray-dark hover:text-white-opac shadow-sm ring-1 ring-inset ring-blue-navy hover:bg-blue-navy"
+                                            id="menu-button" aria-expanded="false" aria-haspopup="true">
+                                        <i class="fa-solid fa-check"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center border border-gray-light p-4 space-x-4 rounded-md hover:border-blue-medium bg-white hover:bg-blue-soft hover:shadow-lg">
+                                <div class="w-full flex flex-col space-y-2">
+                                    <div class="flex w-full text-blue-navy text-sm gap-4">
+                                        <span class="inline-block">
+                                            <i class="fa-regular fa-calendar-clock pr-2"></i>28.08.2024 - 08:00 bis 09:30
+                                            Uhr
+                                        </span>
+                                    </div>
+                                    <hr class="w-full h-px border-t border-gray-light" />
+                                    <div class="flex flex-col text-blue-navy text-sm">
+                                        <strong>Pflegeheim Rosengarten Nord</strong>
+                                        <span>Termin zur Klärung des Bedarfs</span>
+                                    </div>
+                                </div>
+                                <div class="flex justify-end w-12">
+                                    <button type="button"
+                                            class="flex items-center justify-center gap-x-1.5 rounded-md bg-white w-8 h-8 text-sm font-semibold text-gray-dark hover:text-white-opac shadow-sm ring-1 ring-inset ring-blue-navy hover:bg-blue-navy"
+                                            id="menu-button" aria-expanded="false" aria-haspopup="true">
+                                        <i class="fa-solid fa-check"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- ENDE Rechte Seitenleiste für große Screens -->
+        </main>
     </div>
-    <!-- Calendar day content here -->
+
 </div>
 
+
+@inject CalendarService calendarService
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @code {
-    private List<DateTime> Days { get; set; }
-    private DateTime CurrentMonth { get; set; }
-    private List<Event> Events { get; set; } = new List<Event>();
-    private string UserEmail { get; set; } = string.Empty;
-
-    protected override void OnInitialized()
+    //Calendar related
+    private List<DateTime> Days { get; set; } = [];
+    private List<WeekDay> Weekdays { get; set; } = new List<WeekDay>()
     {
-        // Set the current month to the current date
-        CurrentMonth = DateTime.Now;
+        WeekDay.Montag,
+        WeekDay.Dienstag,
+        WeekDay.Mittwoch,
+        WeekDay.Donnerstag,
+        WeekDay.Freitag,
+        WeekDay.Samstag,
+        WeekDay.Sonntag
+    };
 
-        // Generate days for the current month
-        GenerateDays();
-    }
+    private List<Appointment> Appointments { get; set; } = new List<Appointment>()
+    {
+        new Appointment() {CreationDate = DateTime.Now, AppointmentDate=DateTime.Now.AddHours(-1), IsDone=true, GoalText ="Termin bei Frau Stute"},
+        new Appointment() {CreationDate = DateTime.Now.AddDays(3),IsDone=true, GoalText = "Wartungstermin"},
+        new Appointment() {CreationDate = DateTime.Now.AddDays(-2).AddMinutes(-30),AppointmentDate=DateTime.Now.AddDays(-2), GoalText = "Alter Termin"},
+    };
+    private List<DailyReport> DailyReports = new List<DailyReport>()
+    {
+        new DailyReport() {ReportDate = DateTime.Now.AddDays(-2),DailyReportStart = DateTime.Now.AddDays(-2).AddHours(-2), DailyReportEndTime = DateTime.Now.AddDays(-2).AddHours(-1) }
+        new DailyReport() {ReportDate = DateTime.Now.AddDays(-2),DailyReportStart = DateTime.Now.AddDays(-2).AddHours(-2), DailyReportEndTime = DateTime.Now.AddDays(-2).AddHours(-1) }
+    };
+    //CalendarClasses
+    private string AppointmentClassTextColor { get; set; } = string.Empty;
+    private string AppointmentClassColor { get; set; } = string.Empty;
+
+    private DateTime CurrentMonth { get; set; }
+
+    private DateTime lastClickTime;
+    private const int doubleClickThreshold = 300;
+    private bool isDoubleClick;
+    // Microsoft Graph
+    private string UserEmail { get; set; } = string.Empty;
+    private List<Event> Events { get; set; } = new List<Event>();
 
     private void GenerateDays()
     {
@@ -78,13 +1078,8 @@
         Console.WriteLine($"Clicked on: {day.ToShortDateString()}");
         // You can add additional logic for what happens on day click here
     }
-}
 
 
-@code {
-    private DateTime lastClickTime;
-    private const int doubleClickThreshold = 300; // Time in milliseconds to consider a double click
-    private bool isDoubleClick;
 
     private void HandleClick()
     {
@@ -118,6 +1113,11 @@
         }
     }
 
+    private void PlaceHolder()
+    {
+
+    }
+
     private void OnSingleClick()
     {
         Console.WriteLine("Single click detected.");
@@ -129,34 +1129,40 @@
         Console.WriteLine("Double click detected.");
         // Implement your double click logic here
     }
-}
 
 
 
-@inject CalendarService calendarService
-@inject AuthenticationStateProvider AuthenticationStateProvider
-@code {
     private EventCollectionResponse? Response { get; set; } = null;
     private AuthenticationState? AuthState { get; set; } = null;
+    private Event CreateAppointment { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
         AuthState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        UserEmail = GetUserEmail();
+        CreateAppointment = new();
+        CurrentMonth = DateTime.Now;
+
+        GenerateDays();
+        await GetAppointsmentsByMonth();
     }
 
     private async Task PostAppointmentTest()
     {
-        await calendarService.PostAppointmentAsync(UserEmail);
+        if (UserEmail == string.Empty)
+            UserEmail = GetUserEmail();
+        await calendarService.PostAppointmentAsync(CreateAppointment, UserEmail);
     }
 
     private async Task GetAppointsmentsByMonth()
     {
+        UserEmail = "kadir.kaya@igefa.de";
+        Response = await calendarService.GetCalendarByMonthAsync(UserEmail);
         if (AuthState != null)
         {
             if (AuthState.User.Identity != null && AuthState.User.Identity.IsAuthenticated)
             {
-                ClaimsPrincipal user = AuthState.User;
-                UserEmail = AuthState.User.Claims.Where(x => x.Type == "preferred_username").FirstOrDefault()?.Value ?? string.Empty;
+                UserEmail = GetUserEmail();
                 Response = await calendarService.GetCalendarByMonthAsync(UserEmail);
                 if (Response != null && Response.Value != null)
                 {
@@ -164,5 +1170,18 @@
                 }
             }
         }
+    }
+
+    private string GetUserEmail()
+    {
+        if (AuthState != null)
+        {
+            if (AuthState.User.Identity != null && AuthState.User.Identity.IsAuthenticated)
+            {
+                ClaimsPrincipal user = AuthState.User;
+                return AuthState.User.Claims.Where(x => x.Type == "preferred_username").FirstOrDefault()?.Value ?? string.Empty;
+            }
+        }
+        return string.Empty;
     }
 }

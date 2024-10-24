@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Microsoft.Graph;
 using Microsoft.Graph.Models;
-using Radzen.Blazor.Rendering;
 
 namespace ITS.WWS.WebApp.Services
 {
@@ -27,6 +26,7 @@ namespace ITS.WWS.WebApp.Services
         /// <returns>All Outlook calendar appointments of the month.</returns>
         public async Task<EventCollectionResponse?> GetCalendarByMonthAsync(string userId)
         {
+            //TODO: Zwischen Monat differenzieren. Am besten mit Parameter string Monat und hier dann die Monate in Zahlen umwandeln
             if (userId != string.Empty)
             {
                 GraphServiceClient = _graphService.GraphServiceClient;
@@ -56,30 +56,33 @@ namespace ITS.WWS.WebApp.Services
         /// <returns>All Outlook calendar appointments of the week.</returns>
         public async Task<EventCollectionResponse?> GetCalendarByWeekAsync(string userId)
         {
-            if (userId != string.Empty)
+            //TODO: Zwischen Wochen differenzieren. Am besten mit Parameter string Woche und hier dann die Wochen in Zahlen umwandeln
+            if (userId == string.Empty)
             {
-                DateTime currentDate = DateTime.Now;
-                var test = currentDate.StartOfWeek();
-                var test2 = currentDate.EndOfWeek();
-                DateTime startOfDay = new(currentDate.Year, currentDate.Month, 1, 0, 0, 0, DateTimeKind.Local);
-                DateTime endOfDay = startOfDay.AddDays(1).AddTicks(-1);
-
-                string startDateTime = startOfDay.ToString("yyyy-MM-ddTHH:mm:ss");
-                string endDateTime = endOfDay.ToString("yyyy-MM-ddTHH:mm:ss");
-
-                return await GraphServiceClient.Users[userId].CalendarView.GetAsync((requestConfiguration) =>
-                {
-                    requestConfiguration.QueryParameters.StartDateTime = startDateTime;
-                    requestConfiguration.QueryParameters.EndDateTime = endDateTime;
-                    requestConfiguration.Headers.Add("Prefer", "outlook.timezone=\"Europe/Berlin\"");
-
-                });
+                return await Task.FromResult<EventCollectionResponse?>(new EventCollectionResponse());
             }
-            return null;
+            DateTime currentDate = DateTime.Now;
+            DateTime startOfDay = new(currentDate.Year, currentDate.Month, 1, 0, 0, 0, DateTimeKind.Local);
+            DateTime endOfDay = startOfDay.AddDays(1).AddTicks(-1);
+
+            string startDateTime = startOfDay.ToString("yyyy-MM-ddTHH:mm:ss");
+            string endDateTime = endOfDay.ToString("yyyy-MM-ddTHH:mm:ss");
+
+            return await GraphServiceClient.Users[userId].CalendarView.GetAsync((requestConfiguration) =>
+            {
+                requestConfiguration.QueryParameters.StartDateTime = startDateTime;
+                requestConfiguration.QueryParameters.EndDateTime = endDateTime;
+                requestConfiguration.Headers.Add("Prefer", "outlook.timezone=\"Europe/Berlin\"");
+
+            });
         }
 
-        public async Task PostAppointmentAsync(string userEmail)
+        public async Task PostAppointmentAsync(Event appointment, string userEmail)
         {
+            if (userEmail == string.Empty)
+            {
+                return;
+            }
             DateTime startOfDay = DateTime.Now;
             DateTime endOfDay = startOfDay.AddHours(1);
 
@@ -107,35 +110,39 @@ namespace ITS.WWS.WebApp.Services
                     DisplayName = "Bei Danny Zuhause",
                 },
                 Attendees = new List<Attendee>
-                {
-                    new Attendee
                     {
-                        EmailAddress = new EmailAddress
+                        new Attendee
                         {
-                            Address = "kadir.kaya@igefa.de",
-                            Name = "Kadir Kaya",
+                            EmailAddress = new EmailAddress
+                            {
+                                Address = "kadir.kaya@igefa.de",
+                                Name = "Kadir Kaya",
+                            },
+                            Type = AttendeeType.Required,
                         },
-                        Type = AttendeeType.Required,
-                    },
-                    new Attendee
-                    {
-                        EmailAddress = new EmailAddress
+                        new Attendee
                         {
-                            Address = "daniel.lochner@igefa.de",
-                            Name = "Daniel Lochner",
+                            EmailAddress = new EmailAddress
+                            {
+                                Address = "daniel.lochner@igefa.de",
+                                Name = "Daniel Lochner",
+                            },
+                            Type = AttendeeType.Required,
                         },
-                        Type = AttendeeType.Required,
                     },
-                },
                 AllowNewTimeProposals = false,
                 TransactionId = "7E163156-7762-4BEB-A1C6-729EA81755A8",
             };
-
-            // To initialize your graphClient, see https://learn.microsoft.com/en-us/graph/sdks/create-client?from=snippets&tabs=csharp
             var result = await GraphServiceClient.Users[userEmail].Events.PostAsync(requestBody, (requestConfiguration) =>
             {
                 requestConfiguration.Headers.Add("Prefer", "outlook.timezone=\"Pacific Standard Time\"");
             });
+            if(result != null)
+            {
+                //TODO: Vielleicht ToastMessage einabuen
+            }
+
+
         }
     }
 }

@@ -8,72 +8,172 @@ module.exports = {
         './**/*.cs',
         './**/*.razor.cs',
         './**/*.cshtml',
+        './src/**/*.{css,html,js,ts}',
     ],
     theme: {
-        extend: {},
-    },
-    plugins: [
-        function ({ addComponents }) {
-            addComponents({
-                'h1': {
-                    '@apply text-4xl font-bold text-gray-800 leading-tight mb-4': {},
-                },
-
-                // h2 styles
-                'h2': {
-                    '@apply text-3xl font-semibold text-gray-800 leading-tight mb-4': {},
-                },
-
-                // h3 styles
-                'h3': {
-                    '@apply text-2xl font-semibold text-gray-700 leading-tight mb-3': {},
-                },
-
-                // h4 styles
-                'h4': {
-                    '@apply text-xl font-medium text-gray-600 leading-tight mb-2': {},
-                },
-                '.btn-primary': {
-                    '@apply px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition duration-200 ease-in-out': {},
-                },
-                '.btn-secondary': {
-                    '@apply px-4 py-2 bg-gray-500 text-white font-semibold rounded-lg shadow-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75 transition duration-200 ease-in-out': {},
-                },
-                // Label styles
-                '.label': {
-                    '@apply text-sm font-semibold text-gray-700 mb-2': {},
-                },
-
-                // Input text styles
-                '.input-text': {
-                    '@apply w-full p-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:border-blue-500': {},
-                },
-
-                // Text area styles
-                '.input-textarea': {
-                    '@apply w-full p-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:border-blue-500': {},
-                },
-
-                // Select element styles
-                '.select': {
-                    '@apply w-full p-2 border border-gray-300 rounded-lg bg-white text-gray-700 focus:ring focus:ring-blue-200 focus:border-blue-500': {},
-                },
-
-                // Option element styles
-                '.option': {
-                    '@apply text-gray-700': {},
-                },
-
-                // DateTime input styles
-                '.input-datetime': {
-                    '@apply w-full p-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:border-blue-500': {},
-                },
-
-                // Form-group for spacing between elements
-                '.form-group': {
-                    '@apply space-y-4': {},
-                },
-            })
+        fontFamily: {
+            sans: ['Mulish', 'system-ui', 'sans-serif'],
         },
-    ],
+
+        fontWeight: {
+            normal: '400',
+            semibold: '600',
+            extrabold: '800',
+        },
+
+        colors: {
+            warning: '#FFA800',
+            danger: '#B71312',
+            primary: '#003858',
+            info: '#4AC0E7',
+            success: '#18A157',
+            notice: '#fff9ee',
+        },
+
+        extend: {
+            zIndex: {
+                10000: '10000',
+                8000: '8000',
+            },
+            spacing: {
+                fit: 'fit-content',
+                full: '100%',
+                4.5: '1.125rem',
+            },
+            fontSize: {
+                xxs: ['10px', '12px'],
+                xxl: ['32px', '150%'],
+            },
+            opacity: {
+                97: '97%',
+            },
+            colors: {
+                transparent: 'transparent',
+                current: 'currentColor',
+
+                industry: {
+                    industrial: {
+                        flat: '#FFA800',
+                        DEFAULT: '#fdc300',
+                    },
+                    health: '#67c0b5',
+                    facility: '#1d70b7',
+                    gastronomy: '#c2416f',
+                    cleaning: '#76b72a',
+                    wellness: '#003858',
+                },
+
+                primary: {
+                    // ->blue-navy
+                    // default for buttons and links, table headline, headlines
+                    hover: '#003858',
+                    active: '#003858',
+                    text: '#003858',
+                    DEFAULT: '#003858', // Changes color for class text-danger
+                },
+
+                danger: {
+                    // ->blue-navy
+                    // default for buttons and links, table headline, headlines
+                    hover: '#DA5150',
+                    active: '#8E0100',
+                    text: '#B71312',
+                    DEFAULT: '#B71312', // Changes color for class text-danger
+                },
+
+                success: {
+                    // ->blue-navy
+                    // default for buttons and links, table headline, headlines
+                    hover: '#18A157',
+                    active: '#18A157',
+                    'flat-light': '#F4FFF7',
+                    text: '#18A157',
+                    DEFAULT: '#18A157', // Changes color for class text-danger
+                },
+
+                info: {
+                    // ->blue-navy
+                    // default for buttons and links, table headline, headlines
+                    hover: '#4AC0E7',
+                    active: '#1D70B7',
+                    text: '#1D70B7',
+                    DEFAULT: '#1D70B7', // Changes color for class text-danger
+                },
+
+                warning: {
+                    // ->blue-navy
+                    // default for buttons and links, table headline, headlines
+                    hover: '#faab1a',
+                    active: '#FFA800',
+                    text: '#FF9900',
+                    'flat-light': '#FFF9EE', // for light background
+                    flat: '#FDC300',
+                    DEFAULT: '#FFA800', // Changes color for class text-danger
+                },
+
+                // The color sheme represents the interface Palette
+                // @todo (kind is the porameter name at the moment. This could lead to misunderstanding.)
+                // warning : '#FFA800',
+                // danger  : '#B71312',
+                // primary : '#003858',
+                // info    : '#4AC0E7',
+                // success : '#18A157',
+
+                // @todo The name of the color definitions here needed to be defined by usage and not by their color name
+                white: '#ffffff',
+                'white-opac': 'rgb(255 255 255 / 97%)',
+                'blue-navy': {
+                    // default for buttons and links, table headline, headlines
+                    hover: '#015F95',
+                    active: '#165081',
+                    DEFAULT: '#003858',
+                },
+                'blue-medium': {
+                    //active elements. highlight color, headlines
+                    hover: '#2683D2',
+                    DEFAULT: '#1D70B7',
+                },
+                'blue-signal': '#4AC0E7',
+                'blue-soft': '#F1F9FF', //'#F0F7FD',
+                'blue-soft-hover': '#E4F2FF',
+                'gray-dark': {
+                    // default text color
+                    hover: '#3A3A3A',
+                    DEFAULT: '#101010',
+                },
+                'gray-medium': '#606060', // text'
+                'gray-light': '#ced3e0', //'#D7DCE0', // border
+                'green-medium': {
+                    hover: '#1BC569',
+                    active: '#008052',
+                    DEFAULT: '#18A157', // green for shopping cart, finish states etc.
+                },
+                'green-soft': '#F4FFF7', // background color table rows (selected items for cart)
+                'bluegray-medium': '#687E8A', //for light gray text
+                'bluegray-soft': '#F0F3F4', // background for table header, selection bar...
+                gray: {
+                    100: '#F4F7F8',
+                },
+                orange: {
+                    DEFAULT: '#CA7D00',
+                },
+                red: {
+                    hover: '#DA5150',
+                    active: '#8E0100',
+                    DEFAULT: '#B71312',
+                    900: 'rgb(127 29 29)',
+                    600: 'rgb(220 38 38)',
+                    500: 'rgb(239 68 68)',
+                },
+                'red-light': '#FFF5F5',
+                yellow: '#FFA800',
+                'yellow-light': '#FFF9EE',
+                'yellow-dark': '#F79B12',
+            },
+            dropShadow: {
+                'top-lg': '0 0 10px rgb(0 0 0 / 0.1)',
+            },
+        },
+        plugins: [],
+    },
 }

@@ -2,7 +2,6 @@ using Blazored.Modal;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Identity.Web.UI;
 using Microsoft.Identity.Web;
-using Radzen;
 using Tailwind;
 using ITS.WWS.WebApp.Azure;
 using ITS.WWS.WebApp.Services;
@@ -28,7 +27,6 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor()
     .AddMicrosoftIdentityConsentHandler();
 
-builder.Services.AddRadzenComponents();
 builder.Services.AddBlazoredModal();
 builder.Services.AddScoped(sp =>
     sp.GetRequiredService<IConfiguration>().GetSection("AzureAd").Get<AzureAdConfiguration>() ?? new AzureAdConfiguration());

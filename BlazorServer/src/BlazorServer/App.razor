@@ -1,5 +1,4 @@
-﻿@using Radzen.Blazor
-
+﻿
 
 @*Cleared den Cache*@
 @{
@@ -9,21 +8,19 @@
 #endif
 }
 
-<CascadingBlazoredModal>
-    <Router AppAssembly="@typeof(App).Assembly">
+<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(Program).Assembly">
         <Found Context="routeData">
-            <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-            <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)"/>
+            <FocusOnNavigate RouteData="@routeData" Selector="h1"/>
         </Found>
-
         <NotFound>
-            <PageTitle>Not found</PageTitle>
             <LayoutView Layout="@typeof(MainLayout)">
+                <PageTitle>Not found</PageTitle>
                 <p role="alert">Sorry, there's nothing at this address.</p>
             </LayoutView>
         </NotFound>
     </Router>
-</CascadingBlazoredModal>
+</CascadingAuthenticationState>
 
 
-<script src="_content/Radzen.Blazor/Radzen.Blazor.js?v=@(typeof(Radzen.Colors).Assembly.GetName().Version)"></script>

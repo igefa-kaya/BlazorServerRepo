@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
@@ -9,18 +9,85 @@
   <ItemGroup>
     <PackageReference Include="Azure.Identity" Version="1.12.1" />
     <PackageReference Include="Blazored.Modal" Version="7.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.AzureAD.UI" Version="6.0.35" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="6.0.35" />
-    <PackageReference Include="Microsoft.Graph" Version="5.60.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.10" />
+    <PackageReference Include="Microsoft.Graph" Version="5.61.0" />
     <PackageReference Include="Microsoft.Graph.Core" Version="3.1.22" />
     <PackageReference Include="Microsoft.Identity.Web.UI" Version="3.2.2" />
-    <PackageReference Include="Radzen.Blazor" Version="5.2.11" />
     <PackageReference Include="Tailwind.Extensions.AspNetCore" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\BlazorServer.CustomComponents\BlazorServer.CustomComponents.csproj" />
     <ProjectReference Include="..\BlazorServer.Entities\BlazorServer.Entities.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\static\.DS_Store" />
+    <None Include="wwwroot\fa\.DS_Store" />
+    <None Include="wwwroot\fa\css\all.css" />
+    <None Include="wwwroot\fa\css\all.min.css" />
+    <None Include="wwwroot\fa\css\brands.css" />
+    <None Include="wwwroot\fa\css\brands.min.css" />
+    <None Include="wwwroot\fa\css\duotone.css" />
+    <None Include="wwwroot\fa\css\duotone.min.css" />
+    <None Include="wwwroot\fa\css\fontawesome.css" />
+    <None Include="wwwroot\fa\css\fontawesome.min.css" />
+    <None Include="wwwroot\fa\css\light.css" />
+    <None Include="wwwroot\fa\css\light.min.css" />
+    <None Include="wwwroot\fa\css\regular.css" />
+    <None Include="wwwroot\fa\css\regular.min.css" />
+    <None Include="wwwroot\fa\css\sharp-light.css" />
+    <None Include="wwwroot\fa\css\sharp-light.min.css" />
+    <None Include="wwwroot\fa\css\sharp-regular.css" />
+    <None Include="wwwroot\fa\css\sharp-regular.min.css" />
+    <None Include="wwwroot\fa\css\sharp-solid.css" />
+    <None Include="wwwroot\fa\css\sharp-solid.min.css" />
+    <None Include="wwwroot\fa\css\sharp-thin.css" />
+    <None Include="wwwroot\fa\css\sharp-thin.min.css" />
+    <None Include="wwwroot\fa\css\solid.css" />
+    <None Include="wwwroot\fa\css\solid.min.css" />
+    <None Include="wwwroot\fa\css\svg-with-js.css" />
+    <None Include="wwwroot\fa\css\svg-with-js.min.css" />
+    <None Include="wwwroot\fa\css\thin.css" />
+    <None Include="wwwroot\fa\css\thin.min.css" />
+    <None Include="wwwroot\fa\css\v4-font-face.css" />
+    <None Include="wwwroot\fa\css\v4-font-face.min.css" />
+    <None Include="wwwroot\fa\css\v4-shims.css" />
+    <None Include="wwwroot\fa\css\v4-shims.min.css" />
+    <None Include="wwwroot\fa\css\v5-font-face.css" />
+    <None Include="wwwroot\fa\css\v5-font-face.min.css" />
+    <None Include="wwwroot\fa\webfonts\fa-brands-400.ttf" />
+    <None Include="wwwroot\fa\webfonts\fa-brands-400.woff2" />
+    <None Include="wwwroot\fa\webfonts\fa-duotone-900.ttf" />
+    <None Include="wwwroot\fa\webfonts\fa-duotone-900.woff2" />
+    <None Include="wwwroot\fa\webfonts\fa-light-300.ttf" />
+    <None Include="wwwroot\fa\webfonts\fa-light-300.woff2" />
+    <None Include="wwwroot\fa\webfonts\fa-regular-400.ttf" />
+    <None Include="wwwroot\fa\webfonts\fa-regular-400.woff2" />
+    <None Include="wwwroot\fa\webfonts\fa-sharp-light-300.ttf" />
+    <None Include="wwwroot\fa\webfonts\fa-sharp-light-300.woff2" />
+    <None Include="wwwroot\fa\webfonts\fa-sharp-regular-400.ttf" />
+    <None Include="wwwroot\fa\webfonts\fa-sharp-regular-400.woff2" />
+    <None Include="wwwroot\fa\webfonts\fa-sharp-solid-900.ttf" />
+    <None Include="wwwroot\fa\webfonts\fa-sharp-solid-900.woff2" />
+    <None Include="wwwroot\fa\webfonts\fa-sharp-thin-100.ttf" />
+    <None Include="wwwroot\fa\webfonts\fa-sharp-thin-100.woff2" />
+    <None Include="wwwroot\fa\webfonts\fa-solid-900.ttf" />
+    <None Include="wwwroot\fa\webfonts\fa-solid-900.woff2" />
+    <None Include="wwwroot\fa\webfonts\fa-thin-100.ttf" />
+    <None Include="wwwroot\fa\webfonts\fa-thin-100.woff2" />
+    <None Include="wwwroot\fa\webfonts\fa-v4compatibility.ttf" />
+    <None Include="wwwroot\fa\webfonts\fa-v4compatibility.woff2" />
+    <None Include="wwwroot\fonts\mulish-v12-latin-600.ttf" />
+    <None Include="wwwroot\fonts\mulish-v12-latin-600.woff" />
+    <None Include="wwwroot\fonts\mulish-v12-latin-600.woff2" />
+    <None Include="wwwroot\fonts\mulish-v12-latin-800.ttf" />
+    <None Include="wwwroot\fonts\mulish-v12-latin-800.woff" />
+    <None Include="wwwroot\fonts\mulish-v12-latin-800.woff2" />
+    <None Include="wwwroot\fonts\mulish-v12-latin-regular.ttf" />
+    <None Include="wwwroot\fonts\mulish-v12-latin-regular.woff" />
+    <None Include="wwwroot\fonts\mulish-v12-latin-regular.woff2" />
+    <None Include="wwwroot\static\logo.svg" />
   </ItemGroup>
 
 </Project>
