@@ -17,6 +17,7 @@ namespace BlazorServer.Entities
         public string GoalText { get; set; } = string.Empty;
 
         public string Comment { get; set; } = string.Empty;
+        public string AnotherComment { get; set; } = string.Empty;
 
         public string CustomerSatisfaction { get; set; } = string.Empty;
 
